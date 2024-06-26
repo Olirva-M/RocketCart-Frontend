@@ -23,7 +23,7 @@
     color: #333;
   }
   
-  .login input[type="email"],
+  .login input[type="text"], .login input[type="email"],
   .login input[type="password"] {
     width: 370px;
     padding: 10px;

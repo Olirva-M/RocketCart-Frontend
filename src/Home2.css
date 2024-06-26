@@ -1,0 +1,140 @@
+/* Home.css */
+
+.product-list-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.background-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: -1;
+}
+
+.filters {
+    width: 250px;
+    margin-right: 20px;
+    background-color: #f2f2f2;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.filter-section {
+    margin-bottom: 20px;
+}
+
+.filter-section h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+.filter-section input[type="number"] {
+    width: 100px;
+    padding: 5px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.filter-section label {
+    display: block;
+    margin-bottom: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+}
+
+.products-list {
+    flex: 1;
+    max-width: 800px;
+}
+
+.product-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.product-item {
+    display: flex;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    width: 500px;
+}
+
+.product-item-content {
+    display: flex;
+    width: 100%;
+}
+
+.product-image {
+    width: 150px;
+    cursor: pointer;
+}
+
+.product-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.product-details {
+    padding-left: 20px;
+}
+
+.product-name {
+    cursor: pointer;
+    color: blue;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.product-description {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.add-to-cart-button {
+    background-color: #f0c14b;
+    border: 1px solid;
+    border-color: #a88734 #9c7e31 #846a29;
+    color: #111;
+    margin-top: 10px;
+    cursor: pointer;
+    padding: 8px 15px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}

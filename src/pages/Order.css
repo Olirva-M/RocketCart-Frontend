@@ -1,0 +1,39 @@
+.singleorder-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1em;
+    text-align: left;
+}
+
+.singleorder-items th, .singleorder-items td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.singleorder-items th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+}
+
+.singleorder-items td {
+    text-align: center;
+}
+
+.singleorder-items td:first-child {
+    text-align: left;
+}
+
+.singleorder-footer-item {
+    margin: 10px;
+    background-color: #0f62fe;
+    color: #ffffff;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 15px;
+    font-weight: bold;
+    font-size: 1.2em;
+}
