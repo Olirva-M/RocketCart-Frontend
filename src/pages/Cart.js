@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Cart.css';
+import axiosInstance from './axiosInstance';
+import '../css/Cart.css';
 import { useNavigate } from "react-router-dom";
 
-const Cart = ({ logged, setLogged, id, setId }) => {
+const Cart = ({ setShowPopup, setPopupMsg, role, logged, setLogged, id, setId }) => {
     const [cartItems, setCartItems] = useState(null);
     const [placed, setPlaced] = useState(false);
 
@@ -13,7 +13,7 @@ const Cart = ({ logged, setLogged, id, setId }) => {
     const fetchCartItems = async () => {
         try {
             console.log("fetching cart");
-            const response = await axios.get(`http://localhost:8080/api/customers/${id}/cart`);
+            const response = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/cart`);
             console.log('response after fetch', response.data); 
             setCartItems(response.data);
         } catch (error) {
@@ -22,11 +22,11 @@ const Cart = ({ logged, setLogged, id, setId }) => {
     };
 
     useEffect(() => {
+        console.log("print logged in cart", logged, id, role)
         if (!logged) {
             navigate('/login');
             return;
         }
-
         fetchCartItems(); 
     }, [logged, navigate]);
 
@@ -34,19 +34,33 @@ const Cart = ({ logged, setLogged, id, setId }) => {
     const handleOrder = async () => {
         // Implement your order placement logic here
         console.log("Placing order...");
-        await axios.post(`http://localhost:8080/api/customers/${id}/payment`, {paymentMethod:'card'});
+        await axiosInstance.post(`http://localhost:8080/api/customers/${id}/payment`, {paymentMethod:'card'});
+        
+            setShowPopup(true);
+            setPopupMsg("Order Placed Successfully!");
+        
         fetchCartItems();
         setPlaced(true);
 
     };
 
+    async function handleDelete(item){
+        await axiosInstance.delete(`http://localhost:8080/api/customers/${id}/cart/${item.cartItemId}`);
+        setPopupMsg("Product removed from cart");
+        setShowPopup(true)
+
+    }
     // Function to decrease quantity
     const decQuantity = async(product) => {
-        const prod_object = await axios.get(`http://localhost:8080/api/products/${product.product.productId}`);
+        const prod_object = await axiosInstance.get(`http://localhost:8080/api/products/${product.product.productId}`);
 
         if (product.quantity>1){
             console.log("dec possible")
-            await axios.patch(`http://localhost:8080/api/customers/${id}/cart/${product.cartItemId}`, { "quantity":product.quantity-1});
+            await axiosInstance.patch(`http://localhost:8080/api/customers/${id}/cart/${product.cartItemId}`, { "quantity":product.quantity-1});
+        }
+        else{
+            setShowPopup(true);
+            setPopupMsg("Product quantity cannot be zero.");
         }
         fetchCartItems();
 
@@ -54,11 +68,14 @@ const Cart = ({ logged, setLogged, id, setId }) => {
 
     // Function to increase quantity
     const incQuantity = async(product) => {
-        const prod_object = await axios.get(`http://localhost:8080/api/products/${product.product.productId}`);
+        const prod_object = await axiosInstance.get(`http://localhost:8080/api/products/${product.product.productId}`);
         
         if (prod_object.data.stock >= product.quantity+1){
             console.log("inc possible")
-            await axios.patch(`http://localhost:8080/api/customers/${id}/cart/${product.cartItemId}`, { "quantity":product.quantity+1});
+            await axiosInstance.patch(`http://localhost:8080/api/customers/${id}/cart/${product.cartItemId}`, { "quantity":product.quantity+1});
+        }else{
+            setShowPopup(true);
+            setPopupMsg(`Insufficient stock : ${product.product.stock}`);
         }
         fetchCartItems();
     };
@@ -81,6 +98,7 @@ const Cart = ({ logged, setLogged, id, setId }) => {
                             <div className="cart-item-detail">Price</div>
                             <div className="cart-item-detail">Quantity</div>
                             <div className="cart-item-detail">Total</div>
+                            <div className="cart-item-detail"></div>
                         </div>
                     </div>
                     <div className="cart-items">
@@ -98,12 +116,14 @@ const Cart = ({ logged, setLogged, id, setId }) => {
                                     <button onClick={() => incQuantity(item)} style={{ backgroundColor: "#6da0ff" }}>+</button>
                                 </div>
                                 <div className="cart-item-detail">${(item.product.price * item.quantity).toFixed(2)}</div>
+                                <div className="cart-item-detail"><button style={{border:"2px solid red"}} onClick={()=>{handleDelete(item)}}>🗑️</button></div>
                             </div>
                         )))}
                     </div>
                     <div className="cart-footer-item" style={{ margin: '10px', backgroundColor: '#0f62fe', color: '#ffffff', height: "30px", display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
                         Total: ${cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0).toFixed(2)}
                     </div>
+                    
                     <button onClick={handleOrder} style={{ backgroundColor: "#0f62fe", fontSize: "15px", padding: "12px 24px", display: "block", margin: "0 auto" }}>
                 Place Order
             </button>

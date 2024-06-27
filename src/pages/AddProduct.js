@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './AddProduct.css';
+import axiosInstance from './axiosInstance';
+import '../css/AddProduct.css';
 
-const AddProduct = ({ logged, setLogged, id, setId }) => {
+const AddProduct = ({ setShowPopup, setPopupMsg, logged, setLogged, id, setId }) => {
     const navigate = useNavigate();
   const [product, setProduct] = useState({
     productName: '',
@@ -15,6 +15,12 @@ const AddProduct = ({ logged, setLogged, id, setId }) => {
     sellerId: id
   });
   const [showMsg, setShowMsg] = useState(false);
+    const handleCategoryChange = async (event) => {
+      setProduct({
+        ...product,
+        ["categoryName"]: event.target.value
+      });
+    };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +39,9 @@ const AddProduct = ({ logged, setLogged, id, setId }) => {
   const handleSubmit = async(e) => {
     e.preventDefault();
     console.log(product)
-    await axios.post(`http://localhost:8080/api/sellers/${id}/products`, product);
+    await axiosInstance.post(`http://localhost:8080/api/sellers/${id}/products`, product);
+    setShowPopup(true);
+    setPopupMsg("New Product added");
     setShowMsg(true);
     console.log(product);
   };
@@ -46,6 +54,7 @@ const AddProduct = ({ logged, setLogged, id, setId }) => {
           type="text"
           name="productName"
           onChange={handleChange}
+          required
         />
       </div>
       <div className="form-group">
@@ -62,6 +71,7 @@ const AddProduct = ({ logged, setLogged, id, setId }) => {
           name="stock"
           min="1"
           onChange={handleChange}
+          required
         />
       </div>
       <div className="form-group">
@@ -70,6 +80,7 @@ const AddProduct = ({ logged, setLogged, id, setId }) => {
           type="text"
           name="imageUrl"
           onChange={handleChange}
+          required
         />
       </div>
       <div className="form-group">
@@ -79,15 +90,23 @@ const AddProduct = ({ logged, setLogged, id, setId }) => {
           name="price"
           min="1"
           onChange={handleChange}
+          required
         />
       </div>
       <div className="form-group">
         <label>Category</label>
-        <input
-          type="text"
-          name="categoryName"
-          onChange={handleChange}
-        />
+      <select
+        id="category"
+        name="categoryName"
+        onChange={handleCategoryChange}
+      >
+        <option value="Clothing">Clothing</option>
+        <option value="Sports">Sports</option>
+        <option value="Footwear">Footwear</option>
+        <option value="Furniture">Furniture</option>
+      </select>
+
+            
       </div>
       <button type="submit" className="submit-btn">Add Product</button>
     </form>)}

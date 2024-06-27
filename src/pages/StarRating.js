@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const StarRating = ({ rating, setRating }) => {
+const StarRating = ({ hover, rating, setRating }) => {
     const [hoverRating, setHoverRating] = useState(0);
     const handleStarClick = (starRating) => {
             setRating(starRating); 
@@ -18,9 +18,9 @@ const StarRating = ({ rating, setRating }) => {
                 <span
                     key={i}
                     style={styles.star}
-                    onClick={() => handleStarClick(i)}
-                    onMouseEnter={() => handleStarHover(i)}
-                    onMouseLeave={() => handleStarHover(0)}
+                    onClick={() => {if (hover) handleStarClick(i)}}
+                    onMouseEnter={() => {if (hover) handleStarHover(i)}}
+                    onMouseLeave={() => {if (hover) handleStarHover(0)}}
                 >
                     ★
                 </span>
@@ -31,9 +31,9 @@ const StarRating = ({ rating, setRating }) => {
                 <span
                     key={i}
                     style={{ ...styles.star, ...styles.emptyStar }}
-                    onClick={() => handleStarClick(i)}
-                    onMouseEnter={() => handleStarHover(i)}
-                    onMouseLeave={() => handleStarHover(0)}
+                    onClick={() => {if (hover) handleStarClick(i)}}
+                    onMouseEnter={() =>{if (hover) handleStarHover(i)}}
+                    onMouseLeave={() => {if (hover) handleStarHover(0)}}
                 >
                     ★
                 </span>
@@ -47,8 +47,7 @@ const StarRating = ({ rating, setRating }) => {
 const styles = {
     star: {
         color: '#FFD700', 
-        fontSize: '24px',
-        cursor: 'pointer', 
+        fontSize: '24px', 
     },
     emptyStar: {
         color: '#E0E0E0',

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Order.css';
+import axiosInstance from './axiosInstance';
+import '../css/Order.css';
 import { useNavigate, useParams } from "react-router-dom";
 
 const Order = ({ logged, setLogged, id, setId }) => {
@@ -11,7 +11,7 @@ const Order = ({ logged, setLogged, id, setId }) => {
     const fetchOrderItems = async () => {
         try {
             console.log("fetching order", oid);
-            const response = await axios.get(`http://localhost:8080/api/customers/${id}/orderhistory/${oid}`);
+            const response = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/orderhistory/${oid}`);
             setOrderItems(response.data);
             console.log(response.data)
         } catch (error) {

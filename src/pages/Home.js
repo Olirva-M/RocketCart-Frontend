@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import '../Home2.css';
+import axiosInstance from './axiosInstance';
+import '../css/Home2.css';
 import { useNavigate } from 'react-router-dom';
 
-const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
+const Home = ({ setCartItemCount, setShowPopup, setPopupMsg, role, setRole, logged, setLogged, id, setId }) => {
     const min = "10"
     const max = "100000"
     const [products, setProducts] = useState([]);
@@ -47,18 +47,18 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
     const fetchProducts = async () => {
         try {
             var response;
-            if (role === 2){
-              response = await axios.get(`http://localhost:8080/api/sellers/${id}/products?page=${currentPage}&size=${pageSize}&minPrice=${priceFilter.min}&maxPrice=${priceFilter.max}&sort=${selectedOrder}&searchKeyword=${searchQuery}`);//, sort: selectedOrder
+            if (role == 2){
+              response = await axiosInstance.get(`http://localhost:8080/api/sellers/${id}/products?page=${currentPage}&size=${pageSize}&minPrice=${priceFilter.min}&maxPrice=${priceFilter.max}&sort=${selectedOrder}&searchKeyword=${searchQuery}`);//, sort: selectedOrder
                 console.log("seller's products fetched", response.data.content);
             }
 
             else
             {  if (!selectedCategory){
-                response = await axios.get(`http://localhost:8080/api/products?page=${currentPage}&size=${pageSize}&minPrice=${priceFilter.min}&maxPrice=${priceFilter.max}&sort=${selectedOrder}&searchKeyword=${searchQuery}`);//, sort: selectedOrder
-                console.log("all products fetched", response.data.content);
+                response = await axiosInstance.get(`http://localhost:8080/api/products?page=${currentPage}&size=${pageSize}&minPrice=${priceFilter.min}&maxPrice=${priceFilter.max}&sort=${selectedOrder}&searchKeyword=${searchQuery}`);//, sort: selectedOrder
+                console.log("all products fetched", response.data.content, id, role, logged);
 
               }else{
-                response = await axios.get(`http://localhost:8080/api/products?page=${currentPage}&size=${pageSize}&categoryName=${selectedCategory}&minPrice=${priceFilter.min}&maxPrice=${priceFilter.max}&sort=${selectedOrder}&searchKeyword=${searchQuery}`);
+                response = await axiosInstance.get(`http://localhost:8080/api/products?page=${currentPage}&size=${pageSize}&categoryName=${selectedCategory}&minPrice=${priceFilter.min}&maxPrice=${priceFilter.max}&sort=${selectedOrder}&searchKeyword=${searchQuery}`);
                 console.log("category fetched", response);
               }}
             setProducts(response.data.content);
@@ -83,12 +83,16 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
             navigate(`/cart`);
         } else {
             try {
-                const prod_object = await axios.get(`http://localhost:8080/api/products/${pid}`);
-                await axios.post(`http://localhost:8080/api/customers/${id}/cart`, { "product":prod_object.data, "quantity":q });
+                const prod_object = await axiosInstance.get(`http://localhost:8080/api/products/${pid}`);
+                await axiosInstance.post(`http://localhost:8080/api/customers/${id}/cart`, { "product":prod_object.data, "quantity":q });
                 // Sort
                 // -1 default
                 // 0 low to high
                 // 1 high to low
+                setShowPopup(true);
+                setPopupMsg("Product added to cart");
+                const cart = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/cart`);
+                setCartItemCount(cart.data.length);
             } catch (error) {
                 console.error('error:', error);
             }
@@ -101,9 +105,20 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
     };
 
     const handlePageChange = (newPage) => {
-      if (newPage>0)
-        {  setCurrentPage(newPage);
-          setRefresh(true);}
+        if (newPage<0){
+            setShowPopup(true);
+            setPopupMsg("This is the first page!");
+        }
+        else if(newPage > totalPages){
+            setShowPopup(true);
+            setPopupMsg("This is the last page!");
+        }
+        else{
+            window.scrollTo(0, 0);
+            setCurrentPage(newPage);
+            setRefresh(true);
+        }
+    
     };
 
     const [selectedOrder, setSelectedOrder] = useState(-1);
@@ -117,7 +132,7 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
     return (
         <div className="product-list-container">
             <div className="background-glow"></div>
-            {(role !== 2) && (
+            {(role != 2) && (
             <div className="filters">
                 <h2>Filters</h2>
                 <div className="filter-section">
@@ -214,7 +229,7 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
               />
                 {products && (<ul className="product-list">
                     {products.map((product) => (
-                        <li key={product.id} className="product-item">
+                        <li key={product.productId} className="product-item">
                             <div className="product-item-content">
                                 <div
                                     className="product-image"
@@ -231,12 +246,12 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
                                     </h3>
                                     {/* <p className="product-description">{product.description}</p> */}
                                     <p className="product-price">Price: ${product.price}</p>
-                                    {(role !== 2)&&(<button
+                                    {(role != 2)&&(<button
                                         onClick={() => handleAddToCart(product.productId, 1)}
-                                        disabled={product.stock === 0}
-                                        style={{backgroundColor: (product.stock === 0)? "grey":"#f8b400"}}
+                                        disabled={product.stock === 0 || product.disabled}
+                                        style={{backgroundColor: (product.stock === 0 || product.disabled)? "grey":"#f8b400"}}
                                         className="add-to-cart-button">
-                                        Add to Cart
+                                        {(product.stock === 0 || product.disabled)? "Currently unavailable" : "Add to Cart" }
                                     </button>)}
                                 </div>
                             </div>
@@ -246,8 +261,7 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
                 {totalProducts ? (<div className="pagination">
                     <button
                         style={{ color: 'black', textDecoration: 'underline' }}
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
+                        onClick={() => {handlePageChange(currentPage - 1);}}
                     >
                         Previous
                     </button>
@@ -257,7 +271,6 @@ const Home = ({ role, setRole, logged, setLogged, id, setId }) => {
                     <button
                         style={{ color: 'black', textDecoration: 'underline' }}
                         onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage >= totalPages}
                     >
                         Next
                     </button>

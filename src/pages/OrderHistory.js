@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import './OrderHistory.css'; 
+import '../css/OrderHistory.css'; 
+import axiosInstance from './axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
 const OrderHistory = ({logged, setLogged, id, setId}) => {
   const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
   useEffect(() => {
-    // Simulating fetching data from an endpoint
-    // Replace with actual fetch call to your endpoint
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/customers/${id}/orderhistory`);
-        const data = await response.json();
-        setOrders(data); // Assuming data is in the format you provided
+        const response = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/orderhistory`);
+        
+        setOrders(response.data); 
       } catch (error) {
         console.error('Error fetching data:', error);
       }
