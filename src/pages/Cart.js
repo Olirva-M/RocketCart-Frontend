@@ -23,7 +23,7 @@ const Cart = ({ cartItemCount, setCartItemCount, setShowPopup, setPopupMsg, role
 
     useEffect(() => {
         console.log("print logged in cart", logged, id, role)
-        if (!logged) {
+        if (localStorage.getItem("role") == 0) {
             navigate('/login');
             return;
         }
@@ -33,10 +33,9 @@ const Cart = ({ cartItemCount, setCartItemCount, setShowPopup, setPopupMsg, role
     // Function to handle placing order
     const handleOrder = async () => {
         console.log("Placing order...");
-        await axiosInstance.post(`http://localhost:8080/api/customers/${id}/payment`, {paymentMethod:'card'});
-        
+        // await axiosInstance.post(`http://localhost:8080/api/customers/${id}/payment`, {paymentMethod:'card'});
+            navigate('/payment')
             setShowPopup(true);
-            setPopupMsg("Order Placed Successfully!");
         
         fetchCartItems();
         setPlaced(true);

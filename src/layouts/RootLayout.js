@@ -15,7 +15,6 @@ export default function RootLayout({ setCartItemCount, cartItemCount, showPopup,
           <h1>RocketCart</h1>
           <NavLink to="/" activeClassName="nav-link-active">Home</NavLink>
           <NavLink to="/login" activeClassName="nav-link-active">{(logged)? "Profile": "Login"}</NavLink>
-
           {(logged)? (
             <button style={{border:'1px red', backgroundColor:'white', color:'red'}} onClick={()=>{setLogged(false); setRole(0); navigate('/'); localStorage.removeItem('token');localStorage.removeItem('id');localStorage.removeItem('role');}}>Log Out</button>
           ) : null
