@@ -3,7 +3,7 @@ import axiosInstance from './axiosInstance';
 import '../css/Cart.css';
 import { useNavigate } from "react-router-dom";
 
-const Cart = ({ setShowPopup, setPopupMsg, role, logged, setLogged, id, setId }) => {
+const Cart = ({ cartItemCount, setCartItemCount, setShowPopup, setPopupMsg, role, logged, setLogged, id, setId }) => {
     const [cartItems, setCartItems] = useState(null);
     const [placed, setPlaced] = useState(false);
 
@@ -32,7 +32,6 @@ const Cart = ({ setShowPopup, setPopupMsg, role, logged, setLogged, id, setId })
 
     // Function to handle placing order
     const handleOrder = async () => {
-        // Implement your order placement logic here
         console.log("Placing order...");
         await axiosInstance.post(`http://localhost:8080/api/customers/${id}/payment`, {paymentMethod:'card'});
         
@@ -47,6 +46,15 @@ const Cart = ({ setShowPopup, setPopupMsg, role, logged, setLogged, id, setId })
     async function handleDelete(item){
         await axiosInstance.delete(`http://localhost:8080/api/customers/${id}/cart/${item.cartItemId}`);
         setPopupMsg("Product removed from cart");
+        if (localStorage.getItem("role") > 0) {
+            try {
+              const response = await axiosInstance.get(`http://localhost:8080/api/customers/${localStorage.getItem("id")}/cart`);
+              console.log(response);
+              setCartItemCount(response.data.length);
+            } catch (error) {
+              console.error("Error fetching cart items:", error);
+            }
+          }
         setShowPopup(true)
 
     }

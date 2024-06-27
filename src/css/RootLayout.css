@@ -1,21 +1,17 @@
 .root-layout {
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-direction:column;
+    margin-bottom: 90px;
 }
 
 header {
     background-color: #007bff; /* Blue background for the header */
     color: white;
     padding: 10px 20px;
-    display: flex;
-    text-align: left;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.navbar {
-    display: flex;
-    /* align-items: center; */
+    position: fixed;
+    width: 100%;
 }
 
 .navbar h1 {
@@ -50,8 +46,8 @@ main {
   
   .cart-count {
     position: absolute;
-    top: -3px;
-    right: -10px;
+    top: -5px;
+    right: -1px;
     background-color: red;
     color: white;
     border-radius: 50%;

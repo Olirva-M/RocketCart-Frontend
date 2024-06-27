@@ -3,14 +3,19 @@ import '../css/OrderHistory.css';
 import axiosInstance from './axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
-const OrderHistory = ({logged, setLogged, id, setId}) => {
+const OrderHistory = ({ logged, id }) => {
   const [orders, setOrders] = useState([]);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+
   useEffect(() => {
+    if (!logged) {
+      navigate('/login');
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/orderhistory`);
-        
         setOrders(response.data); 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -18,18 +23,9 @@ const OrderHistory = ({logged, setLogged, id, setId}) => {
     };
 
     fetchData();
-  }, []);
+  }, [logged, id, navigate]);
 
-//   useEffect(() => {
-//         if (!logged) {
-//             navigate('/login');
-//             return;
-//         }
-
-//         fetchOrderItems(); 
-//     }, [logged, navigate]);
-
-  function handleOrderClick(oid){
+  function handleOrderClick(oid) {
     navigate(`/order/${oid}`);
   }
 
@@ -37,7 +33,7 @@ const OrderHistory = ({logged, setLogged, id, setId}) => {
     <div>
       <div className="order-list">
         {orders.map(order => (
-          <div key={order.orderId} className="order-item" onClick={()=>handleOrderClick(order.orderId)}>
+          <div key={order.orderId} className="order-item" onClick={() => handleOrderClick(order.orderId)}>
             <div className="order-status">Order {order.status}</div>
             <div><strong>Total Amount:</strong> <span className="order-amount">${order.totalAmount.toFixed(2)}</span></div>
             <div className="order-date">{new Date(order.orderDate).toLocaleString()}</div>

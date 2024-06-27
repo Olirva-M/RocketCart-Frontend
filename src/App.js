@@ -52,7 +52,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchCartItemCount = async () => {
-      console.log("fetching cart items no: role is ", localStorage.getItem("role"), localStorage.getItem("id") );
+      // console.log("fetching cart items no: role is ", localStorage.getItem("role"), localStorage.getItem("id") );
       if (localStorage.getItem("role") > 0) {
         try {
           const response = await axiosInstance.get(`http://localhost:8080/api/customers/${localStorage.getItem("id")}/cart`);
@@ -79,7 +79,7 @@ const App = () => {
       <Route path="/" element={<RootLayout cartItemCount={cartItemCount} setCartItemCount={setCartItemCount} showPopup={showPopup} setShowPopup={setShowPopup} popupMsg={popupMsg} setPopupMsg={setPopupMsg} role={localStorage.getItem('role')} setRole={setRole} logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>}>
         <Route index element={<Home cartItemCount={cartItemCount} setCartItemCount={setCartItemCount} setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={localStorage.getItem('role')} setRole={setRole} logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>} />
         <Route path="login" element={<Login setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={localStorage.getItem('role')} setRole={setRole} logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>} />
-        <Route path="product/:pid" element={<Product cartItemCount={cartItemCount} setCartItemCount={setCartItemCount} setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={localStorage.getItem('role')} setRole={setRole} logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>} />
+        <Route path="product/:pid" element={<Product setCartItemCount={setCartItemCount} cartItemCount={cartItemCount} setCartItemCount={setCartItemCount} setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={localStorage.getItem('role')} setRole={setRole} logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>} />
         <Route path="profile" element={<Profile role={role} setRole={setRole} logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>} />
         <Route path="history" element={<OrderHistory setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={localStorage.getItem('role')} setRole={setRole}  logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>} />
         <Route path="add" element={<AddProduct setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={localStorage.getItem('role')} setRole={setRole} logged={logged} setLogged={setLogged} id={localStorage.getItem('id')} setId={setId}/>} />
@@ -88,7 +88,7 @@ const App = () => {
           <Route path="faq" element={<Faq />} />
           <Route path="contact" element={<Contact />} action={contactAction} />
         </Route> */}
-        <Route path="cart" element={<Cart setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={role} setRole={setRole} logged={logged} setLogged={setLogged} id={id} setId={setId}/>} errorElement={<CartError />}>
+        <Route path="cart" element={<Cart cartItemCount={cartItemCount} setCartItemCount={setCartItemCount} setShowPopup={setShowPopup} setPopupMsg={setPopupMsg} role={role} setRole={setRole} logged={logged} setLogged={setLogged} id={id} setId={setId}/>} errorElement={<CartError />}>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>

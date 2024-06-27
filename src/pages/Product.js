@@ -5,26 +5,34 @@ import axios from 'axios';
 import StarRating from './StarRating';
 import { useNavigate } from 'react-router-dom';
 
-const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, id, setId }) => {
+const Product = ({ setCartItemCount, setShowPopup, setPopupMsg, role, setRole, logged, setLogged, id, setId }) => {
     const [product, setProduct] = useState(null);
     const [avg_rating, setAvgRating] = useState(0);
     const [reviews, setReviews] = useState([]);
+    const [canreview, setCanreview] = useState(false);
     const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
     const { pid } = useParams();
     const navigate = useNavigate();
 
     const fetchProduct = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/api/products/${pid}`);
-          setProduct(response.data);
-          const r = await axios.get(`http://localhost:8080/api/products/${pid}/average-rating`);
-          setAvgRating(r.data);
-          const reviewsResponse = await axios.get(`http://localhost:8080/api/products/${pid}/reviews`);
-          setReviews(reviewsResponse.data);
-          console.log('----------', reviewsResponse);
-          const cust = await axiosInstance.get(`http://localhost:8080/api/login/${id}`);
-          setNewReview({ ...newReview, "customer": cust.data });
-
+            const response = await axios.get(`http://localhost:8080/api/products/${pid}`);
+            setProduct(response.data);
+            const r = await axios.get(`http://localhost:8080/api/products/${pid}/average-rating`);
+            setAvgRating(r.data);
+            const reviewsResponse = await axios.get(`http://localhost:8080/api/products/${pid}/reviews`);
+            setReviews(reviewsResponse.data);
+            const alreadyreviewed = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/products/${pid}/reviews/check`);
+            // const purchased = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/products/${pid}/reviews/check`)
+            console.log("alreadyreviewed", alreadyreviewed.data)
+            if (!alreadyreviewed.data){
+                setCanreview(true);
+            }
+        if (localStorage.getItem("role") == 1)
+        {
+            const cust = await axios.get(`http://localhost:8080/api/c/${id}`);
+            setNewReview({ ...newReview, "customer": cust.data });
+        }
         } catch (error) {
           console.error('Error fetching the product:', error);
         }
@@ -64,6 +72,7 @@ const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, 
 
     useEffect(() => {
         fetchProduct();
+        
     }, [pid]);
 
     const toggle = async() => {
@@ -80,6 +89,8 @@ const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, 
                 const prod_object = await axiosInstance.get(`http://localhost:8080/api/products/${pid}`);
                 await axiosInstance.post(`http://localhost:8080/api/customers/${id}/cart`, { "product": prod_object.data, "quantity": q });
                 setShowPopup(true);
+                const cart = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/cart`);
+                setCartItemCount(cart.data.length);
                 setPopupMsg("Product added to cart");
             } catch (error) {
                 console.error('error:', error);
@@ -88,11 +99,16 @@ const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, 
     };
 
     const handleReviewSubmit = async (e) => {
+        
+
         e.preventDefault();
         try {
-            console.log("new review", newReview);
+            setPopupMsg("Thank you for your review!");
+            
+            console.log('review: ', newReview);
             await axiosInstance.post(`http://localhost:8080/api/products/${pid}/reviews`, newReview);
-            setNewReview({ rating: 0, comment: '' });
+            setCanreview(false);
+            setShowPopup(true);
             fetchProduct();
         } catch (error) {
             console.error('Error submitting review:', error);
@@ -117,8 +133,9 @@ const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, 
                 <div style={styles.detailsContainer}>
                     <h1 style={styles.productTitle}>{product.productName}</h1>
                     <p style={styles.price}>${product.price}</p>
-                    <p>Rating: {avg_rating}</p>
-                    {role === 1 && (
+                    <p>Rating: {avg_rating.toFixed(2)}</p>
+
+                    {role == 1 && (
                         <button
                             onClick={() => handleAddToCart(product.productId, 1)}
                             disabled={product.stock === 0 || product.disabled}
@@ -127,7 +144,7 @@ const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, 
                             {(product.stock === 0 || product.disabled) ? "Currently unavailable" : "Add to Cart" }
                         </button>
                     )}
-                    {role === 2 ? (
+                    {role == 2 ? (
                         <div>
                             <button onClick={() => decQuantity(product)} style={{ backgroundColor: "#6da0ff" }}>-</button>
                             &nbsp;&nbsp;
@@ -151,7 +168,7 @@ const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, 
                 </div>
             </div>
 
-            <form onSubmit={handleReviewSubmit} style={styles.reviewForm}>
+            {localStorage.getItem("role")>0 && (canreview) &&(<form onSubmit={handleReviewSubmit} style={styles.reviewForm}>
                     <h3>Write a Review</h3>
                     <StarRating hover={true} rating={newReview.rating} setRating={(rating) => setNewReview({ ...newReview, rating })} />
                     <textarea 
@@ -162,7 +179,7 @@ const Product = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, 
                         required
                     />
                     <button type="submit" style={styles.submitButton}>Submit</button>
-            </form>
+            </form>)}
 
             <div style={styles.reviewsContainer}>
                 <h2>Customer Reviews</h2>
