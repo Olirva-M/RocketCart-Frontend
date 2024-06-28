@@ -16,6 +16,7 @@ const Cart = ({ cartItemCount, setCartItemCount, setShowPopup, setPopupMsg, role
             const response = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/cart`);
             console.log('response after fetch', response.data); 
             setCartItems(response.data);
+            setCartItemCount(response.data.length)
         } catch (error) {
             console.error('Error fetching cart items:', error);
         }
@@ -23,7 +24,7 @@ const Cart = ({ cartItemCount, setCartItemCount, setShowPopup, setPopupMsg, role
 
     useEffect(() => {
         console.log("print logged in cart", logged, id, role)
-        if (localStorage.getItem("role") == 0) {
+        if (!localStorage.getItem("role")) {
             navigate('/login');
             return;
         }
@@ -33,8 +34,12 @@ const Cart = ({ cartItemCount, setCartItemCount, setShowPopup, setPopupMsg, role
     // Function to handle placing order
     const handleOrder = async () => {
         console.log("Placing order...");
-        // await axiosInstance.post(`http://localhost:8080/api/customers/${id}/payment`, {paymentMethod:'card'});
+        const response = await axiosInstance.post(`http://localhost:8080/api/customers/${id}/make-order`);
+        console.log("Placed order...");
+
+        console.log(response)
             navigate('/payment')
+            setPopupMsg("Redirecting to payment page");
             setShowPopup(true);
         
         fetchCartItems();

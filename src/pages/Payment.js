@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
 import '../css/Payment.css'; 
+import axiosInstance from './axiosInstance';
 
-const Payment = ( setShowPopup, setPopupMsg, role, logged, setLogged, id, setId) => {
-  const [selectedMethod, setSelectedMethod] = useState('credit_card'); // Default selected payment method
+const Payment = ( {setShowPopup, setPopupMsg, role, logged, setLogged, id, setId}) => {
+  const [selectedMethod, setSelectedMethod] = useState('');
 
   const handlePaymentMethodChange = (method) => {
     setSelectedMethod(method);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async() => {
+    if (!selectedMethod){
+      setPopupMsg("Please select payment method!");
+      setShowPopup(true);
+      return
+    }
+
     console.log(`Processing payment using ${selectedMethod} method...`);
+    // await axiosInstance.post(`http://localhost:8080/api/customers/${id}/make-order`);
     setPopupMsg("Order Placed Successfully!");
     setShowPopup(true);
 

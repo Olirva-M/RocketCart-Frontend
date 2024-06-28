@@ -4,6 +4,7 @@ import axiosInstance from './axiosInstance';
 import axios from 'axios';
 import StarRating from './StarRating';
 import { useNavigate } from 'react-router-dom';
+import ProductStat from './ProductStat';
 
 const Product = ({ setCartItemCount, setShowPopup, setPopupMsg, role, setRole, logged, setLogged, id, setId }) => {
     const [product, setProduct] = useState(null);
@@ -11,6 +12,8 @@ const Product = ({ setCartItemCount, setShowPopup, setPopupMsg, role, setRole, l
     const [reviews, setReviews] = useState([]);
     const [canreview, setCanreview] = useState(false);
     const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
+    const [sold, setSold] = useState('');
+    const [notsold, setNotsold] = useState('');
     const { pid } = useParams();
     const navigate = useNavigate();
 
@@ -23,16 +26,18 @@ const Product = ({ setCartItemCount, setShowPopup, setPopupMsg, role, setRole, l
             const reviewsResponse = await axios.get(`http://localhost:8080/api/products/${pid}/reviews`);
             setReviews(reviewsResponse.data);
             const alreadyreviewed = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/products/${pid}/reviews/check`);
-            // const purchased = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/products/${pid}/reviews/check`)
-            console.log("alreadyreviewed", alreadyreviewed.data)
-            if (!alreadyreviewed.data){
+            const purchased = await axiosInstance.get(`http://localhost:8080/api/customers/${id}/products/${pid}/check-purchased`);
+            // console.log("alreadyreviewed", alreadyreviewed.data, purchased.data)
+            if (!alreadyreviewed.data && purchased.data){
                 setCanreview(true);
             }
-        if (localStorage.getItem("role") == 1)
-        {
-            const cust = await axios.get(`http://localhost:8080/api/c/${id}`);
-            setNewReview({ ...newReview, "customer": cust.data });
-        }
+
+            var stats;
+            if (localStorage.getItem("role") == 2){
+                stats = await axiosInstance.get(`http://localhost:8080/api/sellers/${id}/products/${pid}/sold-statistics`);
+                console.log("stats", stats);
+                setSold(stats.data[0]);
+                setNotsold(stats.data[1]);}
         } catch (error) {
           console.error('Error fetching the product:', error);
         }
@@ -106,7 +111,7 @@ const Product = ({ setCartItemCount, setShowPopup, setPopupMsg, role, setRole, l
             setPopupMsg("Thank you for your review!");
             
             console.log('review: ', newReview);
-            await axiosInstance.post(`http://localhost:8080/api/products/${pid}/reviews`, newReview);
+            await axiosInstance.post(`http://localhost:8080/api/customers/${id}/products/${pid}/reviews`, newReview);
             setCanreview(false);
             setShowPopup(true);
             fetchProduct();
@@ -180,6 +185,9 @@ const Product = ({ setCartItemCount, setShowPopup, setPopupMsg, role, setRole, l
                     />
                     <button type="submit" style={styles.submitButton}>Submit</button>
             </form>)}
+            {(localStorage.getItem("role")==2) && (<p style={styles.price}>Revenue Generated: ${(product.price * sold).toFixed(2)}</p>)}
+
+            {(localStorage.getItem("role")==2) && <ProductStat sold={sold} notsold={notsold} />}
 
             <div style={styles.reviewsContainer}>
                 <h2>Customer Reviews</h2>

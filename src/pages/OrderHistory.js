@@ -3,7 +3,7 @@ import '../css/OrderHistory.css';
 import axiosInstance from './axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
-const OrderHistory = ({ logged, id, onClose }) => {
+const OrderHistory = ({setShowPopup, setPopupMsg, role, logged, setLogged, id, setId, onClose }) => {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ const OrderHistory = ({ logged, id, onClose }) => {
         <h2>Order History</h2>
         <div className="order-list">
           {orders.map(order => (
-            <div key={order.orderId} className="order-item" onClick={() => handleOrderClick(order.orderId)}>
+            <div key={order.orderId} className="order-item" onClick={() => {if (order.status.toLowerCase() != "cancelled") {handleOrderClick(order.orderId);}else{ setPopupMsg("Your order has been cancelled!"); setShowPopup(true);}}}>
               <div className={`order-status ${order.status.toLowerCase()}`}>
                 Order {order.status}
               </div>

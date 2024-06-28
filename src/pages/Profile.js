@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from './axiosInstance';
 import '../css/Profile.css';
 import OrderHistory from './OrderHistory';
+import ProductStat from './ProductStat';
 
 const Profile = ({ logged, role, setLogged, id, setId }) => {
   const [customer, setCustomer] = useState(null);
@@ -12,7 +13,7 @@ const Profile = ({ logged, role, setLogged, id, setId }) => {
   useEffect(() => {
     if (logged) {
       if (role == 1) {
-        axiosInstance.get(`http://localhost:8080/api/customer/${id}`)
+        axiosInstance.get(`http://localhost:8080/api/c/${id}`)
           .then(response => {
             setCustomer(response.data);
           })
@@ -21,12 +22,21 @@ const Profile = ({ logged, role, setLogged, id, setId }) => {
           });
       }
       if (role == 2) {
-        axiosInstance.get(`http://localhost:8080/api/sellers/${id}`)
+        axiosInstance.get(`http://localhost:8080/api/s/${id}`)
           .then(response => {
             setCustomer(response.data);
           })
           .catch(error => {
             console.error('There was an error fetching the customer data!', error);
+          });
+      }
+      if (role == 3) {
+        axiosInstance.get(`http://localhost:8080/api/admin/${id}`)
+          .then(response => {
+            setCustomer(response.data);
+          })
+          .catch(error => {
+            console.error('There was an error fetching the admin data!', error);
           });
       }
     } else {
@@ -64,15 +74,18 @@ const Profile = ({ logged, role, setLogged, id, setId }) => {
           <ul>
             <li><strong>Username:</strong> {customer.username}</li>
             <li><strong>Email:</strong> {customer.email}</li>
-            <li><strong>Phone:</strong> {customer.phoneNumber}</li>
+            {(localStorage.getItem("role")!=3) && (<li><strong>Phone:</strong> {customer.phoneNumber}</li>)}
             {(role == 1) && (<li><strong>Billing Address:</strong> {customer.billingAddress}</li>)}
           </ul>
-          <button style={{backgroundColor: "blue"}} onClick={() => setShowOrderHistory(!showOrderHistory)} style={{backgroundColor:"blue"}}>
+          {(localStorage.getItem("role")==1) && (<button style={{backgroundColor: "blue"}} onClick={() => setShowOrderHistory(!showOrderHistory)} style={{backgroundColor:"blue"}}>
             {showOrderHistory ? 'Hide Order History' : 'View Order History'}
-          </button>
+          </button>)}
         </div>
       </div>
-      {showOrderHistory && <OrderHistory logged={logged} id={localStorage.getItem("id")} onClose={() => {setShowOrderHistory(false)}} />}
+      {
+      (localStorage.getItem("role")==1) && showOrderHistory && <OrderHistory logged={logged} id={localStorage.getItem("id")} onClose={() => {setShowOrderHistory(false)}} />}
+      {
+        (localStorage.getItem("role")==2) && <ProductStat />}
     </>
   );
 };

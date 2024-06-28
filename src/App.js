@@ -13,6 +13,10 @@ import Profile from './pages/Profile';
 import Order from './pages/Order';
 import AddProduct from './pages/AddProduct';
 import Payment from './pages/Payment';
+import Customers from './pages/Customers';
+// import VerifiedSellers from './pages/VerifiedSellers';
+// import AuthorizeSellers from './pages/AuthorizeSellers';
+
 
 // layouts
 import RootLayout from './layouts/RootLayout';
@@ -92,6 +96,42 @@ const App = () => {
           id={localStorage.getItem('id')}
           setId={setId} />}
         />
+        <Route path='customer' element={<Customers
+          cartItemCount={cartItemCount}
+          setCartItemCount={setCartItemCount}
+          setShowPopup={setShowPopup}
+          setPopupMsg={setPopupMsg}
+          role={localStorage.getItem('role')}
+          setRole={setRole}
+          logged={logged}
+          setLogged={setLogged}
+          id={localStorage.getItem('id')}
+          setId={setId} />}
+        />
+        {/* <Route index element={<VerifiedSellers
+          cartItemCount={cartItemCount}
+          setCartItemCount={setCartItemCount}
+          setShowPopup={setShowPopup}
+          setPopupMsg={setPopupMsg}
+          role={localStorage.getItem('role')}
+          setRole={setRole}
+          logged={logged}
+          setLogged={setLogged}
+          id={localStorage.getItem('id')}
+          setId={setId} />}
+        />
+        <Route index element={<AuthorizeSellers
+          cartItemCount={cartItemCount}
+          setCartItemCount={setCartItemCount}
+          setShowPopup={setShowPopup}
+          setPopupMsg={setPopupMsg}
+          role={localStorage.getItem('role')}
+          setRole={setRole}
+          logged={logged}
+          setLogged={setLogged}
+          id={localStorage.getItem('id')}
+          setId={setId} />}
+        /> */}
         <Route path="login" element={<Login
           setShowPopup={setShowPopup}
           setPopupMsg={setPopupMsg}
