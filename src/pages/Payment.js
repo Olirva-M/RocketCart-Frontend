@@ -17,7 +17,7 @@ const Payment = ( {setShowPopup, setPopupMsg, role, logged, setLogged, id, setId
     }
 
     console.log(`Processing payment using ${selectedMethod} method...`);
-    // await axiosInstance.post(`http://localhost:8080/api/customers/${id}/make-order`);
+    await axiosInstance.post(`http://localhost:8080/api/customers/${id}/make-payment`, {"paymentMethod": selectedMethod});
     setPopupMsg("Order Placed Successfully!");
     setShowPopup(true);
 

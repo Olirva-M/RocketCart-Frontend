@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../css/Customers.css';
+import axiosInstance from './axiosInstance';
 import Loader from './Loader';
+import '../css/Customers.css';
 
 const Customer = () => {
   const [customers, setCustomers] = useState([]);
@@ -11,10 +11,9 @@ const Customer = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        // const response = await axios.get(``);
-        // setCustomers(response.data);
-        
-        // setLoading(false);
+        const response = await axiosInstance.get(`http://localhost:8080/api/admin/customers`);
+        setCustomers(response.data);
+        setLoading(false);
       } catch (err) {
         setError(err);
         setLoading(false);
@@ -27,20 +26,33 @@ const Customer = () => {
   if (error) return <p>Error loading customers: {error.message}</p>;
 
   return (
-    <div className="customer-list-container">
-      <h2>Customer List</h2>
+    <div className="customer-table-container">
       {loading ? (
-                    <Loader /> 
-                ) :
-      (<ul>
-        
-        {customers.map((customer) => (
-          <li key={customer.id}>
-            <span>{customer.name}</span>
-            <span>{customer.email}</span>
-          </li>
-        ))}
-      </ul>)}
+        <Loader />
+      ) : (
+        <table className="customer-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Phone Number</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Billing Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            {customers.map((customer) => (
+              <tr key={customer.customerId}>
+                <td>{customer.username}</td>
+                <td>{customer.phoneNumber}</td>
+                <td>{customer.email}</td>
+                <td>{customer.address}</td>
+                <td>{customer.billingAddress}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

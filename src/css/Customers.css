@@ -1,36 +1,29 @@
-.customer-list-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  
-  .customer-list-container h2 {
-    text-align: center;
-    color: #343a40;
-  }
-  
-  .customer-list-container ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .customer-list-container li {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 20px;
-    margin: 10px 0;
-    background-color: #ffffff;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .customer-list-container li:nth-child(odd) {
-    background-color: #e9ecef;
-  }
-  
-  .customer-list-container li span {
-    font-weight: 600;
-    color: #495057;
-  }
-  
+.customer-table-container {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.customer-table th,
+.customer-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.customer-table th {
+  background-color: #f2f2f2;
+}
+
+.customer-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.customer-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
