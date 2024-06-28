@@ -25,24 +25,36 @@ const Login = ({ setShowPopup, setPopupMsg, role, setRole, logged, setLogged, id
   const handleLogin = async (e) => {
     e.preventDefault();
       try {
+          var verified;
           const response = await axios.post('http://localhost:8080/api/login', { username, password });
-          console.log(response)
           const jwt  = response.data.jwt;
           const fetched_id  = response.data.userDetails.id;
-          localStorage.setItem('token', jwt); 
-          localStorage.setItem('id', fetched_id); 
-          setLogged(true);
           if (response.data.roles[0]===('ROLE_CUSTOMER')) 
           {
             localStorage.setItem('role', 1); 
             setRole(1);
           }
           else if (response.data.roles[0]===('ROLE_SELLER')) {
-            localStorage.setItem('role', 2); 
-            setRole(2);}
+            verified = await axios.post(`http://localhost:8080/api/login/check-verified/${fetched_id}`);
+            if (verified.data){
+              localStorage.setItem('role', 2); 
+              setRole(2);
+            }
+            else {
+              setPopupMsg("Verification under process")
+              setShowPopup(true);
+              navigate('/login');
+              return
+            }
+          }
           else {
             localStorage.setItem('role', 3); 
             setRole(3);}
+          console.log(response)
+          
+          localStorage.setItem('token', jwt); 
+          localStorage.setItem('id', fetched_id); 
+          setLogged(true);
           setId(response.data.userDetails.id);
           setPopupMsg("Logged in!");
           navigate('/');

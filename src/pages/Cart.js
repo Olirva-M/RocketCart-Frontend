@@ -23,7 +23,8 @@ const Cart = ({ cartItemCount, setCartItemCount, setShowPopup, setPopupMsg, role
     };
 
     useEffect(() => {
-        console.log("print logged in cart", logged, id, role)
+        // console.log("print logged in cart", logged, id, role)
+        
         if (!localStorage.getItem("role")) {
             navigate('/login');
             return;

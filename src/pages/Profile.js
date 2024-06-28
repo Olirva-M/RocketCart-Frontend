@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from './axiosInstance';
 import '../css/Profile.css';
 import OrderHistory from './OrderHistory';
-import ProductStat from './ProductStat';
+import SellerStat from './SellerStat';
 
 const Profile = ({ logged, role, setLogged, id, setId }) => {
   const [customer, setCustomer] = useState(null);
@@ -85,7 +85,7 @@ const Profile = ({ logged, role, setLogged, id, setId }) => {
       {
       (localStorage.getItem("role")==1) && showOrderHistory && <OrderHistory logged={logged} id={localStorage.getItem("id")} onClose={() => {setShowOrderHistory(false)}} />}
       {
-        (localStorage.getItem("role")==2) && <ProductStat />}
+        (localStorage.getItem("role")==2) && <SellerStat />}
     </>
   );
 };

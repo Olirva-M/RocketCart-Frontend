@@ -14,8 +14,8 @@ import Order from './pages/Order';
 import AddProduct from './pages/AddProduct';
 import Payment from './pages/Payment';
 import Customers from './pages/Customers';
-// import VerifiedSellers from './pages/VerifiedSellers';
-// import AuthorizeSellers from './pages/AuthorizeSellers';
+import VerifiedSellers from './pages/VerifiedSellers';
+import AuthorizeSellers from './pages/AuthorizeSellers';
 
 
 // layouts
@@ -108,7 +108,7 @@ const App = () => {
           id={localStorage.getItem('id')}
           setId={setId} />}
         />
-        {/* <Route index element={<VerifiedSellers
+        <Route path='verified-sellers' element={<VerifiedSellers
           cartItemCount={cartItemCount}
           setCartItemCount={setCartItemCount}
           setShowPopup={setShowPopup}
@@ -120,7 +120,7 @@ const App = () => {
           id={localStorage.getItem('id')}
           setId={setId} />}
         />
-        <Route index element={<AuthorizeSellers
+        <Route path='new-sellers' element={<AuthorizeSellers
           cartItemCount={cartItemCount}
           setCartItemCount={setCartItemCount}
           setShowPopup={setShowPopup}
@@ -131,7 +131,7 @@ const App = () => {
           setLogged={setLogged}
           id={localStorage.getItem('id')}
           setId={setId} />}
-        /> */}
+        />
         <Route path="login" element={<Login
           setShowPopup={setShowPopup}
           setPopupMsg={setPopupMsg}

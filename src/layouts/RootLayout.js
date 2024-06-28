@@ -15,8 +15,8 @@ export default function RootLayout({ setCartItemCount, cartItemCount, showPopup,
           <h1>RocketCart</h1>
           { (role!=3) && (<NavLink to="/" activeClassName="nav-link-active">Home</NavLink>)}
           { (role==3) && (<NavLink to="/customer" activeClassName="nav-link-active">Customers</NavLink>)}
-          {/* { (role==3) && (<NavLink to="/verified-sellers" activeClassName="nav-link-active">Sellers</NavLink>)}
-          { (role==3) && (<NavLink to="/new-sellers" activeClassName="nav-link-active">Authorize Sellers</NavLink>)} */}
+          { (role==3) && (<NavLink to="/verified-sellers" activeClassName="nav-link-active">Sellers</NavLink>)}
+          { (role==3) && (<NavLink to="/new-sellers" activeClassName="nav-link-active">Authorize New Sellers</NavLink>)}
 
 
           <NavLink to="/login" activeClassName="nav-link-active">{(logged)? "Profile": "Login"}</NavLink>

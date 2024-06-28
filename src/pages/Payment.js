@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import '../css/Payment.css'; 
 import axiosInstance from './axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
 const Payment = ( {setShowPopup, setPopupMsg, role, logged, setLogged, id, setId}) => {
   const [selectedMethod, setSelectedMethod] = useState('');
+  const navigate=useNavigate();
 
   const handlePaymentMethodChange = (method) => {
     setSelectedMethod(method);
@@ -20,6 +22,7 @@ const Payment = ( {setShowPopup, setPopupMsg, role, logged, setLogged, id, setId
     await axiosInstance.post(`http://localhost:8080/api/customers/${id}/make-payment`, {"paymentMethod": selectedMethod});
     setPopupMsg("Order Placed Successfully!");
     setShowPopup(true);
+    navigate('/cart');
 
   };
 
